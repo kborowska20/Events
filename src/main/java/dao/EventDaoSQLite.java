@@ -20,7 +20,7 @@ public class EventDaoSQLite implements EventDao {
             Connection c = ConnectToDb.getConnection();
             Statement stmt = c.createStatement();
             c.setAutoCommit(false);
-            String sql = "INSERT INTO Events(name , Date, category, description)" +
+            String sql = "INSERT INTO events(name , Date, category, description)" +
                     "VALUES ('" + event.getName() + "','" + event.getDate() + "','" + event.getCategory() +
                     "','" + event.getDescription() + "');";
             stmt.executeUpdate(sql);
@@ -38,7 +38,7 @@ public class EventDaoSQLite implements EventDao {
         try {
             Connection c = ConnectToDb.getConnection();
             Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Events WHERE id = " + id + ";");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM events WHERE id = " + id + ";");
             String name = rs.getString("name");
             String dateString = rs.getString("Date");
             DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
@@ -49,6 +49,7 @@ public class EventDaoSQLite implements EventDao {
             event.setId(id);
             rs.close();
             stmt.close();
+            c.close();
             return event;
         } catch (Exception e) {
             System.err.println("Wrong id!");
@@ -66,6 +67,7 @@ public class EventDaoSQLite implements EventDao {
             stmt.executeUpdate(sql);
             stmt.close();
             c.commit();
+            c.close();
         } catch (Exception e) {
             System.err.println("Wrong id!");
         }
@@ -74,13 +76,13 @@ public class EventDaoSQLite implements EventDao {
 
     @Override
     public List<Event> getAll() {
-        List<Event> eventsList = getList("SELECT * FROM Product;");
+        List<Event> eventsList = getList("SELECT * FROM events;");
         return eventsList;
     }
 
     @Override
     public List<Event> getBy(String category) {
-        List<Event> eventListbyCategory = getList("SELECT * FROM Product WHERE supplierID =" +category + ";");
+        List<Event> eventListbyCategory = getList("SELECT * FROM events WHERE supplierID =" +category + ";");
         return eventListbyCategory;
     }
 
@@ -104,6 +106,7 @@ public class EventDaoSQLite implements EventDao {
             }
             rs.close();
             stmt.close();
+            c.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
